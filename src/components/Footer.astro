@@ -1,0 +1,63 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { nav, site, whatsappLink, addressLine, directionsUrl, hoursText } from '@/data/site';
+import { categories } from '@/data/categories';
+const year = new Date().getFullYear();
+const company = [...nav.filter((n) => n.href !== '/products'), { href: '/quote', label: 'Request a Quote' }, { href: '/privacy', label: 'Privacy Policy' }];
+---
+
+<footer class="mt-auto bg-ink-950 text-ink-200">
+  <div class="container-x grid gap-10 py-12 sm:grid-cols-2 sm:py-16 lg:grid-cols-12">
+    <div class="sm:col-span-2 lg:col-span-4">
+      <a href="/" class="inline-block"><Logo light /></a>
+      <p class="mt-5 max-w-sm text-sm leading-relaxed text-ink-300">
+        {site.name} manufactures ICU beds, ward beds, examination couches, stretchers, trolleys and ward furniture in Kondhwa, Pune.
+      </p>
+      <ul class="mt-6 flex gap-2" aria-label="Social media">
+        <li><a href={site.social.instagram} target="_blank" rel="noopener" aria-label="Instagram" class="grid size-11 place-items-center rounded-md border border-white/15 text-white transition hover:border-teal-300 hover:text-teal-300"><Icon name="instagram" /></a></li>
+        <li><a href={site.social.facebook} target="_blank" rel="noopener" aria-label="Facebook" class="grid size-11 place-items-center rounded-md border border-white/15 text-white transition hover:border-teal-300 hover:text-teal-300"><Icon name="facebook" /></a></li>
+        <li><a href={whatsappLink()} target="_blank" rel="noopener" aria-label="WhatsApp" class="grid size-11 place-items-center rounded-md border border-white/15 text-white transition hover:border-whatsapp hover:text-whatsapp"><Icon name="whatsapp" /></a></li>
+      </ul>
+    </div>
+    <div class="lg:col-span-3">
+      <h2 class="label-mono !text-ink-400">Products</h2>
+      <ul class="mt-4 space-y-1 text-sm">
+        <li><a href="/products" class="inline-block py-1.5 hover:text-white">All products</a></li>
+        {categories.map((c) => <li><a href={`/products/category/${c.slug}`} class="inline-block py-1.5 hover:text-white">{c.name}</a></li>)}
+      </ul>
+    </div>
+    <div class="lg:col-span-2">
+      <h2 class="label-mono !text-ink-400">Company</h2>
+      <ul class="mt-4 space-y-1 text-sm">
+        {company.map((n) => <li><a href={n.href} class="inline-block py-1.5 hover:text-white">{n.label}</a></li>)}
+      </ul>
+    </div>
+    <div class="lg:col-span-3">
+      <h2 class="label-mono !text-ink-400">Contact</h2>
+      <address class="mt-4 space-y-3.5 text-sm not-italic">
+        <p class="flex gap-3">
+          <Icon name="pin" class="mt-0.5 size-5 shrink-0 text-teal-300" />
+          <span>{addressLine}<br /><a href={directionsUrl} target="_blank" rel="noopener" class="mt-1 inline-block font-semibold text-teal-300 hover:underline">Get directions</a></span>
+        </p>
+        <a href={site.phoneHref} class="flex gap-3 hover:text-white"><Icon name="phone" class="size-5 shrink-0 text-teal-300" />{site.phone}</a>
+        <a href={whatsappLink()} target="_blank" rel="noopener" class="flex gap-3 hover:text-white"><Icon name="whatsapp" class="size-5 shrink-0 text-teal-300" />{site.whatsappDisplay}</a>
+        <a href={`mailto:${site.email}`} class="flex gap-3 break-all hover:text-white"><Icon name="mail" class="size-5 shrink-0 text-teal-300" />{site.email}</a>
+        {
+          hoursText && (
+            <p class="flex gap-3">
+              <Icon name="clock" class="mt-0.5 size-5 shrink-0 text-teal-300" />
+              <span>{hoursText}</span>
+            </p>
+          )
+        }
+      </address>
+    </div>
+  </div>
+  <div class="border-t border-white/10">
+    <div class="container-x flex flex-col gap-1 py-6 font-mono text-[11px] tracking-wide text-ink-400 sm:flex-row sm:justify-between">
+      <p>&copy; {year} {site.name}</p>
+      <p>Hospital furniture manufacturer · Kondhwa, Pune</p>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,52 @@
+---
+import { getImage } from 'astro:assets';
+import Layout from '@/layouts/Layout.astro';
+import PageHero from '@/components/PageHero.astro';
+import QuoteBand from '@/components/QuoteBand.astro';
+import PhotoGallery from '@/components/PhotoGallery';
+import { products } from '@/data/products';
+import { categories } from '@/data/categories';
+import { site } from '@/data/site';
+import { productImage } from '@/lib/images';
+import { breadcrumbSchema } from '@/lib/schema';
+
+const crumbs = [{ href: '/gallery', label: 'Gallery' }];
+const photos = (
+  await Promise.all(
+    products.map((p) =>
+      Promise.all(
+        p.images.map(async (name, i) => {
+          const src = productImage(name);
+          const [thumb, full] = await Promise.all([
+            getImage({ src, widths: [240, 360, 480, 640], format: 'webp' }),
+            getImage({ src, width: 1400, format: 'webp', quality: 82 }),
+          ]);
+          return {
+            src: thumb.src,
+            srcset: thumb.srcSet.attribute,
+            full: full.src,
+            width: src.width,
+            height: src.height,
+            alt: p.images.length > 1 ? `${p.name}, view ${i + 1}` : p.name,
+            code: p.code,
+            slug: p.slug,
+            category: p.category,
+          };
+        }),
+      ),
+    ),
+  )
+).flat();
+---
+
+<Layout
+  title="Product Photo Gallery"
+  description={`Photos of ${products.length} hospital furniture products made by ${site.name}, Pune: ICU beds, ward beds, stretchers, examination couches, trolleys and ward furniture.`}
+  jsonLd={[breadcrumbSchema(Astro.site, crumbs)]}
+>
+  <PageHero eyebrow={`${photos.length} photos`} title="Product gallery" intro="Photos from our product catalogue. Tap any photo to enlarge it, swipe to browse, or open the product." crumbs={crumbs} />
+  <section class="container-x py-6 sm:py-10">
+    <PhotoGallery client:visible photos={photos} categories={categories.map((c) => ({ slug: c.slug, name: c.short }))} />
+  </section>
+  <QuoteBand />
+</Layout>

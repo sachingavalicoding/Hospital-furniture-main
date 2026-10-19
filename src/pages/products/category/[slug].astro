@@ -1,0 +1,63 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { Image } from 'astro:assets';
+import Layout from '@/layouts/Layout.astro';
+import PageHero from '@/components/PageHero.astro';
+import QuoteBand from '@/components/QuoteBand.astro';
+import ProductCatalog from '@/components/ProductCatalog';
+import { products } from '@/data/products';
+import { categories, type Category } from '@/data/categories';
+import { site } from '@/data/site';
+import { toCatalogItems } from '@/lib/catalog';
+import { operations, materials } from '@/lib/attributes';
+import { breadcrumbSchema } from '@/lib/schema';
+
+export const getStaticPaths = (() => categories.map((c) => ({ params: { slug: c.slug }, props: { category: c } }))) satisfies GetStaticPaths;
+
+const { category } = Astro.props as { category: Category };
+const list = products.filter((p) => p.category === category.slug);
+const items = await toCatalogItems(list);
+const crumbs = [
+  { href: '/products', label: 'Products' },
+  { href: '/products/category', label: 'Ranges' },
+  { href: `/products/category/${category.slug}`, label: category.short },
+];
+const others = categories.filter((c) => c.slug !== category.slug);
+const itemList = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: category.name,
+  numberOfItems: list.length,
+  itemListElement: list.map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: new URL(`/products/${p.slug}/`, Astro.site).href, name: p.name })),
+};
+---
+
+<Layout
+  title={`${category.name} Manufacturer in Pune`}
+  description={`${category.description} Request a quote from ${site.name}, Pune.`}
+  image={category.image}
+  jsonLd={[breadcrumbSchema(Astro.site, crumbs), itemList]}
+>
+  <PageHero eyebrow={`${list.length} products`} title={category.name} intro={category.description} crumbs={crumbs} />
+  <section class="container-x py-6 sm:py-10">
+    <ProductCatalog client:load items={items} categories={[]} operations={operations} materials={materials} whatsapp={site.whatsapp} fixedCategory={category.slug} />
+  </section>
+  <section class="container-x pt-6" aria-labelledby="other-ranges">
+    <h2 id="other-ranges" class="text-xl font-bold sm:text-2xl">Other ranges</h2>
+    <ul class="no-scrollbar -mx-4 mt-5 flex gap-3 overflow-x-auto px-4 sm:mx-0 sm:grid sm:grid-cols-3 sm:px-0 lg:grid-cols-5">
+      {
+        others.map((c) => (
+          <li class="w-40 shrink-0 sm:w-auto">
+            <a href={`/products/category/${c.slug}`} class="group block h-full rounded-lg border border-ink-200 p-3 transition hover:border-ink-400">
+              <span class="tile block aspect-[4/3] overflow-hidden rounded-md">
+                <Image src={c.image} alt="" widths={[160, 240, 320]} sizes="(min-width: 1024px) 220px, 160px" class="size-full object-contain p-2 mix-blend-multiply" />
+              </span>
+              <span class="mt-2 block text-sm font-semibold text-ink-900">{c.name}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+  <QuoteBand />
+</Layout>

@@ -1,0 +1,57 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import MobileMenu from './MobileMenu';
+import { nav, site, whatsappLink } from '@/data/site';
+import { categories } from '@/data/categories';
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
+---
+
+<header data-header class="group/header sticky top-0 z-50 border-b border-ink-200 bg-white transition-shadow data-[scrolled]:shadow-[0_6px_24px_-12px_rgb(11_31_51/0.25)]">
+  <div class="container-x flex h-14 items-center justify-between gap-3 sm:h-16 lg:h-[4.5rem]">
+    <a href="/" class="shrink-0"><Logo /></a>
+    <nav aria-label="Main" class="hidden lg:block">
+      <ul class="flex items-center">
+        {
+          nav.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                aria-current={isActive(item.href) ? 'page' : undefined}
+                class:list={[
+                  'relative block px-3.5 py-2 text-[14px] font-medium transition xl:px-4',
+                  isActive(item.href)
+                    ? 'text-ink-900 after:absolute after:inset-x-3.5 after:-bottom-[15px] after:h-0.5 after:bg-teal-600'
+                    : 'text-ink-600 hover:text-ink-900',
+                ]}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <div class="flex items-center gap-2">
+      <a href={site.phoneHref} class="hidden items-center gap-2 px-2 text-sm font-semibold text-ink-900 xl:flex">
+        <Icon name="phone" class="size-4 text-teal-600" />{site.phone}
+      </a>
+      <a href="/quote" class="btn-primary hidden !min-h-11 !px-4 text-sm lg:inline-flex">Request a Quote</a>
+      <a href={site.phoneHref} aria-label={`Call ${site.phone}`} class="grid size-11 place-items-center rounded-md text-ink-900 lg:hidden">
+        <Icon name="phone" class="size-5" />
+      </a>
+      <MobileMenu
+        client:media="(max-width: 1023px)"
+        items={[{ href: '/', label: 'Home' }, ...nav, { href: '/quote', label: 'Request a Quote' }]}
+        categories={categories.map((c) => ({ href: `/products/category/${c.slug}`, label: c.short }))}
+        current={path}
+        phone={site.phone}
+        phoneHref={site.phoneHref}
+        whatsappHref={whatsappLink()}
+        email={site.email}
+      />
+    </div>
+  </div>
+</header>

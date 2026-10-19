@@ -1,0 +1,17 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Icon from '@/components/Icon.astro';
+import { site, whatsappLink } from '@/data/site';
+---
+
+<Layout title="Request sent" description="Your quote request has been sent." noindex>
+  <section class="container-x py-16 text-center sm:py-24">
+    <span class="mx-auto grid size-14 place-items-center rounded-full bg-teal-600 text-white"><Icon name="check" class="size-7" /></span>
+    <h1 class="mt-6 text-3xl font-bold sm:text-4xl">Thank you, your request has been sent</h1>
+    <p class="mx-auto mt-3 max-w-md text-ink-600">We will reply with a quotation by phone or email. For anything urgent, message us on WhatsApp.</p>
+    <div class="mt-8 grid justify-center gap-2.5 sm:flex">
+      <a href="/products" class="btn-line">Continue browsing</a>
+      <a href={whatsappLink()} target="_blank" rel="noopener" class="btn-whatsapp"><Icon name="whatsapp" class="size-5" /> WhatsApp {site.whatsappDisplay}</a>
+    </div>
+  </section>
+</Layout>

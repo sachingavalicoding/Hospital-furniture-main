@@ -1,0 +1,195 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/archivo/standard.css';
+@import '@fontsource/jetbrains-mono/latin-500.css';
+
+/*
+ * Design system: "workshop catalogue".
+ * Ink navy for structure, clinical teal for action, steel greys for detail.
+ * Product photos sit on light studio tiles with stamped catalogue codes,
+ * specs read like a printed spec sheet (mono labels, hairline rules).
+ */
+@theme {
+  --font-sans: 'Archivo Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Archivo Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-ink-950: #06121f;
+  --color-ink-900: #0b1f33;
+  --color-ink-800: #142d47;
+  --color-ink-700: #213e5c;
+  --color-ink-600: #36536f;
+  --color-ink-500: #5b6b7b;
+  --color-ink-400: #8392a1;
+  --color-ink-300: #b7c2cc;
+  --color-ink-200: #dce3e8;
+  --color-ink-100: #edf1f4;
+  --color-ink-50: #f5f7f8;
+
+  --color-teal-900: #0a3f3e;
+  --color-teal-800: #0b5453;
+  --color-teal-700: #0c6563;
+  --color-teal-600: #0f7c7a;
+  --color-teal-500: #14958f;
+  --color-teal-400: #3fb3ac;
+  --color-teal-300: #7fd1ca;
+  --color-teal-100: #d5efec;
+  --color-teal-50: #ebf6f4;
+
+  --color-whatsapp: #15803d;
+  --color-whatsapp-dark: #116632;
+
+  --shadow-tile: 0 1px 0 rgb(11 31 51 / 0.04), 0 12px 32px -18px rgb(11 31 51 / 0.28);
+  --shadow-pop: 0 24px 60px -24px rgb(11 31 51 / 0.45);
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    scroll-padding-top: 5rem;
+  }
+  body {
+    @apply bg-white font-sans text-[15px] leading-relaxed text-ink-700 antialiased sm:text-base;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display text-ink-900;
+    font-stretch: 92%;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-teal-500;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@utility btn {
+  @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-md px-5 text-[15px] font-semibold transition duration-200 select-none focus-visible:outline-2 focus-visible:outline-offset-2 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60;
+}
+
+@layer components {
+  .container-x {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+  .label-mono {
+    @apply font-mono text-[11px] font-medium tracking-[0.12em] text-ink-500 uppercase;
+  }
+  .eyebrow {
+    @apply flex items-center gap-2 font-mono text-[11px] font-medium tracking-[0.14em] text-teal-700 uppercase;
+  }
+  .eyebrow::before {
+    content: '';
+    @apply h-px w-5 bg-teal-600;
+  }
+  .stamp {
+    @apply inline-flex items-center rounded-sm border border-ink-300 bg-white/90 px-1.5 py-0.5 font-mono text-[11px] font-medium text-ink-800;
+  }
+  .btn-primary {
+    @apply btn bg-teal-600 text-white hover:bg-teal-700;
+  }
+  .btn-ink {
+    @apply btn bg-ink-900 text-white hover:bg-ink-800;
+  }
+  .btn-line {
+    @apply btn border border-ink-300 bg-white text-ink-900 hover:border-ink-900;
+  }
+  .btn-ghost-light {
+    @apply btn border border-white/35 text-white hover:bg-white/10;
+  }
+  .btn-whatsapp {
+    @apply btn bg-whatsapp text-white hover:bg-whatsapp-dark;
+  }
+  .field {
+    @apply block min-h-12 w-full rounded-md border border-ink-300 bg-white px-3.5 py-3 text-base text-ink-900 placeholder:text-ink-400 transition focus:border-teal-600 focus:ring-4 focus:ring-teal-600/15 focus:outline-none aria-[invalid=true]:border-red-600;
+  }
+  .label {
+    @apply mb-1.5 block text-sm font-semibold text-ink-900;
+  }
+  .tile {
+    @apply bg-ink-50 bg-[radial-gradient(circle_at_50%_40%,#fff_0,#f5f7f8_70%)];
+  }
+  .rule {
+    @apply border-t border-ink-200;
+  }
+  .prose-site p {
+    @apply mt-4 first:mt-0;
+  }
+  .prose-site h2 {
+    @apply mt-10 text-xl font-bold first:mt-0;
+  }
+  .prose-site ul {
+    @apply mt-3 list-disc space-y-1.5 pl-5;
+  }
+  .prose-site a {
+    @apply font-medium text-teal-700 underline underline-offset-2;
+  }
+}
+
+/* Image placeholder shimmer until the image has loaded. */
+.img-ph {
+  background: linear-gradient(100deg, #f5f7f8 30%, #edf1f4 50%, #f5f7f8 70%) 0 0 / 300% 100%;
+  animation: ph 1.4s linear infinite;
+}
+.img-ph.loaded {
+  animation: none;
+  background: transparent;
+}
+@keyframes ph {
+  to {
+    background-position: -300% 0;
+  }
+}
+
+/* Scroll reveal: content is visible by default and only animates once JS marks it. */
+.js .reveal:not(.is-visible) {
+  opacity: 0;
+  transform: translateY(16px);
+}
+.reveal {
+  transition:
+    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--delay, 0ms);
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Blueprint grid used behind dark hero panels. */
+.blueprint {
+  background-image:
+    linear-gradient(rgb(255 255 255 / 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.045) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-position: -1px -1px;
+}
+.blueprint::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 80% 0%, rgb(20 149 143 / 0.22), transparent 55%);
+}
+.blueprint > * {
+  position: relative;
+  z-index: 1;
+}

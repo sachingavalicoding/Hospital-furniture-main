@@ -1,0 +1,28 @@
+---
+import { site } from '@/data/site';
+interface Props {
+  light?: boolean;
+  compact?: boolean;
+}
+const { light = false, compact = false } = Astro.props;
+---
+
+<span class="flex items-center gap-2.5">
+  <svg class="size-9 shrink-0 sm:size-10" viewBox="0 0 40 40" aria-hidden="true">
+    <rect width="40" height="40" rx="6" fill={light ? '#ffffff' : '#0b1f33'}></rect>
+    <path d="M8 27V13M8 22h24v5M12 18.5h7" fill="none" stroke={light ? '#0b1f33' : '#ffffff'} stroke-width="2.6" stroke-linecap="square"></path>
+    <path d="M26 10.5v7M22.5 14h7" stroke="#3fb3ac" stroke-width="2.6" stroke-linecap="square"></path>
+  </svg>
+  <span class="flex flex-col leading-none">
+    <span class:list={['font-display text-[1.02rem] font-bold tracking-tight sm:text-[1.08rem]', light ? 'text-white' : 'text-ink-900']} style="font-stretch:88%">
+      {site.shortName}
+    </span>
+    {
+      !compact && (
+        <span class:list={['mt-1 font-mono text-[9.5px] font-medium tracking-[0.2em] uppercase', light ? 'text-teal-300' : 'text-teal-700']}>
+          Production · Pune
+        </span>
+      )
+    }
+  </span>
+</span>

@@ -1,0 +1,27 @@
+---
+import Icon from './Icon.astro';
+import { site, whatsappLink } from '@/data/site';
+interface Props {
+  title?: string;
+  text?: string;
+}
+const {
+  title = 'Planning a ward, ICU or clinic set-up?',
+  text = 'Send the product codes and quantities you need. We reply with one combined quotation with pricing and lead time.',
+} = Astro.props;
+---
+
+<section class="container-x py-14 sm:py-20" aria-labelledby="quote-band-title">
+  <div class="reveal relative overflow-hidden rounded-lg bg-teal-700 px-5 py-9 text-white sm:px-10 sm:py-12 lg:flex lg:items-center lg:justify-between lg:gap-10">
+    <div aria-hidden="true" class="pointer-events-none absolute -top-10 -right-10 font-mono text-[9rem] leading-none font-medium text-white/[0.07] select-none sm:text-[12rem]">RFQ</div>
+    <div class="relative max-w-2xl">
+      <p class="label-mono !text-teal-100">Request for quotation</p>
+      <h2 id="quote-band-title" class="mt-2 text-[1.6rem] leading-tight font-bold text-white sm:text-3xl">{title}</h2>
+      <p class="mt-3 text-teal-50">{text}</p>
+    </div>
+    <div class="relative mt-7 grid gap-2.5 sm:flex lg:mt-0 lg:shrink-0">
+      <a href="/quote" class="btn bg-white text-ink-900 hover:bg-ink-50">Request a Quote <Icon name="arrowRight" class="size-4" /></a>
+      <a href={whatsappLink()} target="_blank" rel="noopener" class="btn-ghost-light"><Icon name="whatsapp" class="size-5" /> WhatsApp {site.whatsappDisplay}</a>
+    </div>
+  </div>
+</section>

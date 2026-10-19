@@ -1,0 +1,140 @@
+---
+import '@/styles/global.css';
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import BottomBar from '@/components/BottomBar.astro';
+import { site, addressLine, mapsPlaceUrl } from '@/data/site';
+import defaultOg from '@/assets/products/M-3.jpg';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: ImageMetadata;
+  noindex?: boolean;
+  jsonLd?: Record<string, unknown>[];
+  /** Product pages pass a product-specific quote link and WhatsApp message. */
+  action?: { quoteHref: string; whatsappText: string };
+}
+
+const { title, description = site.description, image = defaultOg, noindex = false, jsonLd = [], action } = Astro.props;
+const fullTitle = title ? `${title} | ${site.name}` : `${site.name} | Hospital Furniture Manufacturer in Pune`;
+const canonical = new URL(Astro.url.pathname.replace(/\/?$/, '/'), Astro.site).href;
+const og = await getImage({ src: image, width: 1200, height: 630, fit: 'contain', background: '#ffffff', format: 'jpg', quality: 78 });
+const ogUrl = new URL(og.src, Astro.site).href;
+
+const gaId = import.meta.env.PUBLIC_GA_ID;
+const gscToken = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION;
+
+// Structured data needs the days, so hours without confirmed days stay out of it.
+const schemaHours = (site.hours ?? []).filter((h) => h.schemaDays?.length);
+const business = {
+  '@context': 'https://schema.org',
+  '@type': ['LocalBusiness', 'Organization'],
+  '@id': new URL('/#business', Astro.site).href,
+  name: site.name,
+  description: site.description,
+  url: Astro.site?.href,
+  logo: new URL('/logo.png', Astro.site).href,
+  image: ogUrl,
+  email: site.email,
+  telephone: site.phone.replace(/\s/g, ''),
+  founder: { '@type': 'Person', name: site.owner },
+  foundingDate: site.founded,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: site.address.street,
+    addressLocality: site.address.city,
+    addressRegion: site.address.region,
+    postalCode: site.address.postalCode,
+    addressCountry: site.address.country,
+  },
+  geo: { '@type': 'GeoCoordinates', latitude: site.geo.lat, longitude: site.geo.lng },
+  hasMap: mapsPlaceUrl,
+  areaServed: { '@type': 'Country', name: 'India' },
+  sameAs: [site.social.instagram, site.social.facebook],
+  ...(schemaHours.length
+    ? {
+        openingHoursSpecification: schemaHours.map((h) => ({
+          '@type': 'OpeningHoursSpecification',
+          dayOfWeek: h.schemaDays,
+          opens: h.open,
+          closes: h.close,
+        })),
+      }
+    : {}),
+};
+const schemas = [business, ...jsonLd];
+---
+
+<!doctype html>
+<html lang="en-IN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+      // Never leave content hidden if the reveal script fails to run.
+      setTimeout(function () {
+        document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('is-visible'); });
+      }, 2500);
+    </script>
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="theme-color" content="#0b1f33" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="geo.region" content="IN-MH" />
+    <meta name="geo.placename" content={site.address.city} />
+    {gscToken && <meta name="google-site-verification" content={gscToken} />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_IN" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogUrl} />
+    <meta name="business:contact_data:street_address" content={addressLine} />
+
+    {schemas.map((s) => <script type="application/ld+json" set:html={JSON.stringify(s)} />)}
+    {
+      gaId && (
+        <>
+          <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} />
+          <script is:inline define:vars={{ gaId }}>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { dataLayer.push(arguments); }
+            gtag('js', new Date());
+            gtag('config', gaId);
+          </script>
+        </>
+      )
+    }
+    <slot name="head" />
+  </head>
+  <body class="flex min-h-screen flex-col pb-[calc(4rem+env(safe-area-inset-bottom))] lg:pb-0">
+    <a href="#main" class="sr-only z-[100] rounded-md bg-ink-900 px-4 py-3 text-white focus:not-sr-only focus:fixed focus:top-3 focus:left-3">Skip to content</a>
+    <Header />
+    <main id="main" tabindex="-1" class="flex-1 outline-none">
+      <slot />
+    </main>
+    <Footer />
+    <BottomBar quoteHref={action?.quoteHref} whatsappText={action?.whatsappText} />
+    <script>
+      import '@/scripts/site';
+    </script>
+  </body>
+</html>

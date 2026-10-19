@@ -1,0 +1,83 @@
+---
+import { Image } from 'astro:assets';
+import Layout from '@/layouts/Layout.astro';
+import PageHero from '@/components/PageHero.astro';
+import Icon from '@/components/Icon.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import QuoteBand from '@/components/QuoteBand.astro';
+import { site, addressLine } from '@/data/site';
+import { categories } from '@/data/categories';
+import { products } from '@/data/products';
+import { breadcrumbSchema } from '@/lib/schema';
+import { productImage } from '@/lib/images';
+
+const crumbs = [{ href: '/about', label: 'About' }];
+const values = [
+  { icon: 'factory', title: 'Manufacturer, not a reseller', text: 'Products are built in our own workshop in Kondhwa, Pune, so we control the build and can discuss changes with you.' },
+  { icon: 'shield', title: 'Practical materials', text: 'Powder-coated steel frames, stainless steel tops and polymer bows that stand up to daily cleaning.' },
+  { icon: 'wrench', title: 'Features staff use', text: 'Collapsible railings, castors, drawers and footsteps where they make the work easier.' },
+  { icon: 'chat', title: 'Direct contact', text: 'Talk to the people who make your furniture by phone, WhatsApp or at the workshop.' },
+] as const;
+const showcase = ['M-3.jpg', 'M-36.jpg', 'M-29.jpg', 'M-51.jpg'];
+---
+
+<Layout
+  title="About Us"
+  description={`${site.name} is a hospital furniture manufacturer in Kondhwa, Pune, founded in ${site.founded} by ${site.owner}. We make ICU beds, ward beds, trolleys and ward furniture.`}
+  jsonLd={[breadcrumbSchema(Astro.site, crumbs)]}
+>
+  <PageHero eyebrow="About us" title="Hospital furniture, made in Pune" crumbs={crumbs} />
+
+  <section class="container-x py-12 sm:py-20">
+    <div class="grid items-start gap-10 lg:grid-cols-2 lg:gap-16">
+      <div>
+        <p class="text-lg text-ink-700 sm:text-xl">
+          <strong class="text-ink-900">{site.name}</strong> designs and manufactures hospital furniture for healthcare facilities of every size.
+          The company was founded in {site.founded} by {site.owner} and today offers {products.length} catalogue products across {categories.length} ranges.
+        </p>
+        <p class="mt-5 text-ink-600 sm:text-lg">
+          From motorised ICU beds and emergency recovery trolleys to bedside lockers and examination couches, we build furniture that is sturdy,
+          easy to clean and comfortable for patients and staff.
+        </p>
+        <dl class="mt-8 grid grid-cols-3 border-y border-ink-200">
+          <div class="py-4 pr-3"><dt class="label-mono">Founded</dt><dd class="mt-1 text-2xl font-bold text-ink-900">{site.founded}</dd></div>
+          <div class="border-x border-ink-200 px-3 py-4"><dt class="label-mono">Products</dt><dd class="mt-1 text-2xl font-bold text-ink-900">{products.length}</dd></div>
+          <div class="py-4 pl-3"><dt class="label-mono">Based in</dt><dd class="mt-1 text-2xl font-bold text-ink-900">Pune</dd></div>
+        </dl>
+        <p class="mt-6 flex gap-3 text-[15px] text-ink-600"><Icon name="pin" class="mt-0.5 size-5 shrink-0 text-teal-600" />{addressLine}</p>
+      </div>
+      <ul class="grid grid-cols-2 gap-3" aria-label="Products from our workshop">
+        {
+          showcase.map((f, i) => (
+            <li class="reveal tile img-ph aspect-square overflow-hidden rounded-lg border border-ink-200" style={`--delay:${i * 70}ms`}>
+              <Image src={productImage(f)} alt="" widths={[240, 360, 480]} sizes="(min-width: 1024px) 280px, 45vw" class="size-full object-contain p-5 mix-blend-multiply" />
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="border-y border-ink-200 bg-ink-50 py-12 sm:py-20">
+    <div class="container-x">
+      <SectionHeading eyebrow="How we work" title="What you can expect" />
+      <ul class="mt-8 grid gap-px overflow-hidden rounded-lg border border-ink-200 bg-ink-200 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          values.map((v, i) => (
+            <li class="reveal bg-white p-5 sm:p-6" style={`--delay:${i * 70}ms`}>
+              <Icon name={v.icon} class="size-7 text-teal-600" />
+              <h3 class="mt-4 text-lg font-semibold">{v.title}</h3>
+              <p class="mt-1.5 text-[15px] text-ink-600">{v.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="mt-8 grid gap-2.5 sm:flex">
+        <a href="/products" class="btn-ink">Browse the catalogue</a>
+        <a href="/industries" class="btn-line">Industries we serve</a>
+      </div>
+    </div>
+  </section>
+
+  <QuoteBand />
+</Layout>

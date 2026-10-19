@@ -1,0 +1,46 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import PageHero from '@/components/PageHero.astro';
+import Icon from '@/components/Icon.astro';
+import { faqs } from '@/data/faqs';
+import { site, whatsappLink } from '@/data/site';
+import { breadcrumbSchema } from '@/lib/schema';
+
+const crumbs = [{ href: '/faq', label: 'FAQ' }];
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+};
+---
+
+<Layout
+  title="Frequently Asked Questions"
+  description={`Answers about buying hospital furniture from ${site.name}, Pune: quotations, bulk orders, delivery, warranty, custom sizes and visiting the workshop.`}
+  jsonLd={[breadcrumbSchema(Astro.site, crumbs), faqSchema]}
+>
+  <PageHero eyebrow="FAQ" title="Frequently asked questions" crumbs={crumbs} />
+  <section class="container-x max-w-3xl py-10 sm:py-14">
+    <div class="divide-y divide-ink-200 rounded-lg border border-ink-200">
+      {
+        faqs.map((f, i) => (
+          <details class="group px-4 sm:px-6" open={i === 0}>
+            <summary class="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-4 text-[17px] font-semibold text-ink-900 [&::-webkit-details-marker]:hidden">
+              <h2 class="text-[17px] font-semibold">{f.q}</h2>
+              <Icon name="chevronDown" class="size-5 shrink-0 text-ink-500 transition group-open:rotate-180" />
+            </summary>
+            <p class="pb-5 text-ink-600">{f.a}</p>
+          </details>
+        ))
+      }
+    </div>
+    <div class="mt-8 rounded-lg bg-ink-50 p-5 sm:p-6">
+      <h2 class="text-lg font-semibold">Have another question?</h2>
+      <p class="mt-1 text-ink-600">Ask us directly and we will answer.</p>
+      <div class="mt-4 grid gap-2.5 sm:flex">
+        <a href={whatsappLink('Hello, I have a question about your hospital furniture.')} target="_blank" rel="noopener" class="btn-whatsapp"><Icon name="whatsapp" class="size-5" /> Ask on WhatsApp</a>
+        <a href="/contact" class="btn-line">Contact page</a>
+      </div>
+    </div>
+  </section>
+</Layout>

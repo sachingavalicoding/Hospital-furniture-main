@@ -1,0 +1,56 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import PageHero from '@/components/PageHero.astro';
+import Icon from '@/components/Icon.astro';
+import MapBlock from '@/components/MapBlock.astro';
+import QuoteForm from '@/components/QuoteForm';
+import { products } from '@/data/products';
+import { site, whatsappLink, addressLine } from '@/data/site';
+import { breadcrumbSchema } from '@/lib/schema';
+
+const crumbs = [{ href: '/contact', label: 'Contact' }];
+const channels = [
+  { icon: 'phone', label: 'Call', value: site.phone, href: site.phoneHref },
+  { icon: 'whatsapp', label: 'WhatsApp', value: site.whatsappDisplay, href: whatsappLink(), external: true },
+  { icon: 'mail', label: 'Email', value: site.email, href: `mailto:${site.email}` },
+  { icon: 'instagram', label: 'Instagram', value: site.social.instagramHandle, href: site.social.instagram, external: true },
+] as const;
+---
+
+<Layout
+  title="Contact Us"
+  description={`Contact ${site.name}, hospital furniture manufacturer at ${addressLine}. Call ${site.phone}, WhatsApp ${site.whatsappDisplay} or email ${site.email}.`}
+  jsonLd={[breadcrumbSchema(Astro.site, crumbs)]}
+>
+  <PageHero eyebrow="Contact" title="Talk to the workshop" intro="Call, WhatsApp or email us, or send the form below. We reply to every enquiry." crumbs={crumbs} />
+
+  <section class="container-x py-8 sm:py-12" aria-label="Contact details">
+    <ul class="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-ink-200 bg-ink-200 lg:grid-cols-4">
+      {
+        channels.map((c) => (
+          <li class="bg-white">
+            <a href={c.href} target={'external' in c ? '_blank' : undefined} rel={'external' in c ? 'noopener' : undefined} class="group flex h-full flex-col gap-2 p-4 hover:bg-ink-50 sm:p-5">
+              <Icon name={c.icon} class:list={['size-6', c.icon === 'whatsapp' ? 'text-whatsapp-dark' : 'text-teal-600']} />
+              <span class="label-mono">{c.label}</span>
+              <span class="text-[14px] font-semibold break-all text-ink-900 sm:text-[15px]">{c.value}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="container-x pb-10 sm:pb-14">
+    <MapBlock heading="Find us in Kondhwa, Pune" />
+  </section>
+
+  <section id="quote" class="scroll-mt-20 border-t border-ink-200 bg-ink-50 py-10 sm:py-16" aria-labelledby="form-title">
+    <div class="container-x max-w-4xl">
+      <h2 id="form-title" class="text-2xl font-bold sm:text-3xl">Send an enquiry</h2>
+      <p class="mt-2 text-ink-600">Ask about any product or request a quotation. For larger orders use the <a href="/quote" class="font-semibold text-teal-700 underline">quote page</a>.</p>
+      <div class="mt-6 rounded-lg border border-ink-200 bg-white p-4 sm:p-8">
+        <QuoteForm client:visible products={products.map((p) => ({ slug: p.slug, code: p.code, name: p.name }))} whatsapp={site.whatsapp} email={site.email} />
+      </div>
+    </div>
+  </section>
+</Layout>

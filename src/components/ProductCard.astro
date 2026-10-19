@@ -1,0 +1,37 @@
+---
+import { Image } from 'astro:assets';
+import type { Product } from '@/data/products';
+import { categoryBySlug } from '@/data/categories';
+import { productImage } from '@/lib/images';
+
+interface Props {
+  product: Product;
+  eager?: boolean;
+  sizes?: string;
+}
+const { product, eager = false, sizes = '(min-width: 1280px) 290px, (min-width: 640px) 45vw, 46vw' } = Astro.props;
+const href = `/products/${product.slug}`;
+---
+
+<article class="group relative flex h-full flex-col overflow-hidden rounded-lg border border-ink-200 bg-white transition duration-300 hover:border-ink-400 hover:shadow-tile">
+  <div class="tile img-ph relative aspect-square overflow-hidden">
+    <Image
+      src={productImage(product.images[0])}
+      alt={product.name}
+      widths={[240, 320, 480, 640]}
+      sizes={sizes}
+      loading={eager ? 'eager' : 'lazy'}
+      class="size-full object-contain p-4 mix-blend-multiply transition duration-500 group-hover:scale-[1.04] sm:p-6"
+    />
+    <span class="stamp absolute top-2.5 left-2.5 sm:top-3 sm:left-3">{product.code}</span>
+  </div>
+  <div class="flex flex-1 flex-col border-t border-ink-200 p-3 sm:p-4">
+    <p class="label-mono !text-[10px] !text-teal-700">{categoryBySlug[product.category].short}</p>
+    <h3 class="mt-1 text-[14px] leading-snug font-semibold sm:text-[15px]">
+      <a href={href} class="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none">{product.name}</a>
+    </h3>
+    <p class="mt-auto flex items-center gap-1 pt-3 text-[13px] font-semibold text-teal-700">
+      View details <span aria-hidden="true" class="transition group-hover:translate-x-0.5">→</span>
+    </p>
+  </div>
+</article>
