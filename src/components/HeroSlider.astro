@@ -1,0 +1,66 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import { categories } from '@/data/categories';
+import { products } from '@/data/products';
+import { productImage } from '@/lib/images';
+
+// One slide per product range, in a sensible browsing order.
+const order = ['icu-beds', 'examination', 'patient-transfer', 'trolleys', 'ward-beds', 'ward-furniture'];
+const slides = order.map((slug) => {
+  const c = categories.find((x) => x.slug === slug)!;
+  const list = products.filter((p) => p.category === slug);
+  // The product shown in the range photo, so the stamped code matches the picture.
+  const lead = list.find((p) => productImage(p.images[0]).src === c.image.src) ?? list[0];
+  return { c, count: list.length, lead };
+});
+---
+
+<div data-slider data-autoplay="6000" class="relative" role="region" aria-roledescription="carousel" aria-label="Product ranges">
+  <div data-track tabindex="0" aria-label="Product ranges, use arrow keys to move" class="no-scrollbar flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain rounded-lg outline-offset-4">
+    {
+      slides.map(({ c, count, lead }, i) => (
+        <article data-slide aria-roledescription="slide" aria-label={`${i + 1} of ${slides.length}: ${c.name}`} class="relative w-full shrink-0 snap-start">
+          <a href={`/products/category/${c.slug}`} class="group block overflow-hidden rounded-lg bg-white">
+            <div class="tile img-ph relative aspect-[5/4] sm:aspect-[4/3]">
+              <Image
+                src={c.image}
+                alt={`${lead.name}, ${c.name} range`}
+                widths={[360, 520, 720, 900]}
+                sizes="(min-width: 1024px) 560px, 92vw"
+                loading={i === 0 ? 'eager' : 'lazy'}
+                fetchpriority={i === 0 ? 'high' : 'auto'}
+                class="size-full object-contain p-6 mix-blend-multiply transition duration-700 group-hover:scale-[1.03] sm:p-10"
+              />
+              <span class="stamp absolute top-3 left-3">{lead.code}</span>
+              <span class="absolute top-3 right-3 font-mono text-[11px] text-ink-500">{String(i + 1).padStart(2, '0')} / {String(slides.length).padStart(2, '0')}</span>
+            </div>
+            <div class="flex items-center justify-between gap-3 border-t border-ink-200 px-4 py-3.5 sm:px-5">
+              <div class="min-w-0">
+                <p class="label-mono !text-[10px]">{count} products</p>
+                <p class="truncate font-display text-[17px] font-semibold text-ink-900 sm:text-lg">{c.name}</p>
+              </div>
+              <span class="grid size-10 shrink-0 place-items-center rounded-md bg-ink-900 text-white transition group-hover:bg-teal-600"><Icon name="arrowRight" class="size-4" /></span>
+            </div>
+          </a>
+        </article>
+      ))
+    }
+  </div>
+  <div class="mt-4 flex items-center justify-between gap-4">
+    <div class="flex items-center gap-1" role="group" aria-label="Choose slide">
+      {
+        slides.map(({ c }, i) => (
+          <button type="button" data-dot aria-current={i === 0 ? 'true' : 'false'} aria-label={`Show ${c.short}`} class="group/dot grid h-11 w-7 place-items-center">
+            <span class="block h-1 w-full rounded-full bg-white/25 transition group-aria-[current=true]/dot:bg-teal-300" />
+          </button>
+        ))
+      }
+    </div>
+    <div class="flex gap-2">
+      <button type="button" data-prev aria-label="Previous range" class="grid size-11 place-items-center rounded-md border border-white/20 text-white hover:bg-white/10"><Icon name="chevronLeft" class="size-5" /></button>
+      <button type="button" data-next aria-label="Next range" class="grid size-11 place-items-center rounded-md border border-white/20 text-white hover:bg-white/10"><Icon name="chevronRight" class="size-5" /></button>
+    </div>
+  </div>
+  <p data-status class="sr-only" aria-live="polite"></p>
+</div>

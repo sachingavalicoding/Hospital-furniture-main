@@ -1,0 +1,53 @@
+---
+import { Image } from 'astro:assets';
+import Layout from '@/layouts/Layout.astro';
+import PageHero from '@/components/PageHero.astro';
+import Icon from '@/components/Icon.astro';
+import QuoteBand from '@/components/QuoteBand.astro';
+import { categories } from '@/data/categories';
+import { products } from '@/data/products';
+import { site } from '@/data/site';
+import { breadcrumbSchema } from '@/lib/schema';
+
+const crumbs = [
+  { href: '/products', label: 'Products' },
+  { href: '/products/category', label: 'Ranges' },
+];
+const ranges = categories.map((c) => ({ c, list: products.filter((p) => p.category === c.slug) }));
+---
+
+<Layout
+  title="Product Ranges"
+  description={`Six hospital furniture ranges from ${site.name}, Pune: ICU and Fowler beds, ward beds, stretchers, examination couches, OT trolleys and ward furniture.`}
+  jsonLd={[breadcrumbSchema(Astro.site, crumbs)]}
+>
+  <PageHero eyebrow="Product ranges" title="Browse by range" intro="Every product belongs to one of six ranges. Open a range to see all its products with filters." crumbs={crumbs} />
+  <section class="container-x py-10 sm:py-14">
+    <ol class="grid gap-4 sm:gap-6 md:grid-cols-2">
+      {
+        ranges.map(({ c, list }, i) => (
+          <li class="reveal" style={`--delay:${(i % 2) * 80}ms`}>
+            <article class="group relative grid h-full grid-cols-[120px_minmax(0,1fr)] overflow-hidden rounded-lg border border-ink-200 transition hover:border-ink-400 hover:shadow-tile sm:grid-cols-[200px_minmax(0,1fr)]">
+              <div class="tile img-ph border-r border-ink-200">
+                <Image src={c.image} alt="" widths={[160, 240, 400]} sizes="(min-width: 640px) 200px, 120px" class="size-full object-contain p-3 mix-blend-multiply sm:p-5" />
+              </div>
+              <div class="flex flex-col p-4 sm:p-6">
+                <p class="font-mono text-[11px] text-ink-500">{String(i + 1).padStart(2, '0')} · {list.length} products</p>
+                <h2 class="mt-1 text-lg font-bold sm:text-xl">
+                  <a href={`/products/category/${c.slug}`} class="after:absolute after:inset-0 after:content-['']">{c.name}</a>
+                </h2>
+                <p class="mt-1.5 line-clamp-3 text-sm text-ink-600">{c.description}</p>
+                <p class="mt-auto flex flex-wrap gap-1.5 pt-3">
+                  {list.slice(0, 4).map((p) => <span class="stamp">{p.code}</span>)}
+                  {list.length > 4 && <span class="stamp">+{list.length - 4}</span>}
+                </p>
+              </div>
+              <Icon name="arrowRight" class="absolute top-4 right-4 size-5 text-ink-400 transition group-hover:text-teal-600" />
+            </article>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+  <QuoteBand />
+</Layout>

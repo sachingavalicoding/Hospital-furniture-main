@@ -1,5 +1,9 @@
-import { site } from './site';
+import { site, addressLine } from './site';
 
+/**
+ * Only answers we can stand behind. Add delivery, warranty and customisation
+ * answers here once the business confirms its policies.
+ */
 export const faqs = [
   {
     q: 'Can I buy products directly on this website?',
@@ -7,14 +11,18 @@ export const faqs = [
   },
   {
     q: 'Do you supply bulk orders for new hospitals and wards?',
-    a: 'Yes. We supply complete sets of beds, trolleys, examination couches and ward furniture for hospitals, nursing homes and clinics. Share your list of product codes and quantities to get a combined quote.',
-  },
-  {
-    q: 'Can I visit your workshop in Pune?',
-    a: `Yes. We are located at ${site.address.street}, ${site.address.city} ${site.address.postalCode}. Please call or WhatsApp us before visiting so we can arrange a time.`,
+    a: 'Yes. We supply sets of beds, trolleys, examination couches and ward furniture for hospitals, nursing homes and clinics. Share your list of product codes and quantities to get one combined quotation.',
   },
   {
     q: 'How do I share my exact requirement?',
-    a: 'Use the product codes shown on each item, such as M3 or M29, in the quote form or on WhatsApp. Mention quantities, any finish preferences and your delivery city.',
+    a: 'Use the catalogue code shown on each product, such as M3 or M29, in the quote form or on WhatsApp. Mention quantities, any finish preference and your delivery city.',
+  },
+  {
+    q: 'Where are you located?',
+    a: `Our workshop is at ${addressLine}. Please call or WhatsApp us before visiting so we can arrange a time.`,
+  },
+  {
+    q: 'How can I contact you?',
+    a: `Call ${site.phone}, message us on WhatsApp at ${site.whatsappDisplay} or email ${site.email}. You can also send a request through the quote form on this website.`,
   },
 ];

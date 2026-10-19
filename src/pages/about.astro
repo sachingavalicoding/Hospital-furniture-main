@@ -5,93 +5,78 @@ import PageHero from '@/components/PageHero.astro';
 import Icon from '@/components/Icon.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import QuoteBand from '@/components/QuoteBand.astro';
-import { site } from '@/data/site';
+import { site, addressLine } from '@/data/site';
 import { categories } from '@/data/categories';
 import { products } from '@/data/products';
 import { breadcrumbSchema } from '@/lib/schema';
-import office from '@/assets/site/office.jpg';
-import ward from '@/assets/site/hero-ward.jpg';
-import room from '@/assets/site/private-room.jpg';
+import { productImage } from '@/lib/images';
 
 const crumbs = [{ href: '/about', label: 'About' }];
 const values = [
-  { icon: 'factory', title: 'Manufacturer, not a reseller', text: 'Products are built in our own workshop in Kondhwa, Pune, so we control quality and can adapt designs.' },
-  { icon: 'shield', title: 'Durable materials', text: 'Mild steel with powder coating, stainless steel tops and polymer bows chosen for daily cleaning and heavy use.' },
-  { icon: 'wrench', title: 'Practical designs', text: 'Features that nurses and doctors actually use: collapsible railings, castors with brakes, drawers and footsteps.' },
-  { icon: 'chat', title: 'Personal service', text: 'Talk directly to the people who make your furniture, on the phone, WhatsApp or at our workshop.' },
+  { icon: 'factory', title: 'Manufacturer, not a reseller', text: 'Products are built in our own workshop in Kondhwa, Pune, so we control the build and can discuss changes with you.' },
+  { icon: 'shield', title: 'Practical materials', text: 'Powder-coated steel frames, stainless steel tops and polymer bows that stand up to daily cleaning.' },
+  { icon: 'wrench', title: 'Features staff use', text: 'Collapsible railings, castors, drawers and footsteps where they make the work easier.' },
+  { icon: 'chat', title: 'Direct contact', text: 'Talk to the people who make your furniture by phone, WhatsApp or at the workshop.' },
 ] as const;
-const industries = [
-  { icon: 'hospital', label: 'Multi-speciality hospitals' },
-  { icon: 'heart', label: 'ICU & critical care units' },
-  { icon: 'clipboard', label: 'Clinics & OPDs' },
-  { icon: 'baby', label: 'Maternity & nursing homes' },
-  { icon: 'flask', label: 'Diagnostic centres' },
-  { icon: 'academic', label: 'Medical colleges' },
-] as const;
+const showcase = ['M-3.jpg', 'M-36.jpg', 'M-29.jpg', 'M-51.jpg'];
 ---
 
 <Layout
   title="About Us"
-  description={`${site.name} is a hospital furniture manufacturer in Kondhwa, Pune, founded in ${site.founded} by ${site.owner}. We build ICU beds, ward beds, trolleys and ward furniture.`}
+  description={`${site.name} is a hospital furniture manufacturer in Kondhwa, Pune, founded in ${site.founded} by ${site.owner}. We make ICU beds, ward beds, trolleys and ward furniture.`}
   jsonLd={[breadcrumbSchema(Astro.site, crumbs)]}
 >
-  <PageHero eyebrow="About us" title="Hospital furniture, made with care in Pune" crumbs={crumbs} />
+  <PageHero eyebrow="About us" title="Hospital furniture, made in Pune" crumbs={crumbs} />
 
-  <section class="container-x py-16 sm:py-20">
-    <div class="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-      <div class="reveal">
-        <p class="text-lg leading-relaxed text-slate-600">
-          <strong class="text-navy-900">{site.name}</strong> designs and manufactures hospital furniture for healthcare
-          facilities of every size. Founded in {site.founded} by {site.owner}, we started with hospital beds and have grown
-          into a full range of {products.length}+ products across {categories.length} categories.
+  <section class="container-x py-12 sm:py-20">
+    <div class="grid items-start gap-10 lg:grid-cols-2 lg:gap-16">
+      <div>
+        <p class="text-lg text-ink-700 sm:text-xl">
+          <strong class="text-ink-900">{site.name}</strong> designs and manufactures hospital furniture for healthcare facilities of every size.
+          The company was founded in {site.founded} by {site.owner} and today offers {products.length} catalogue products across {categories.length} ranges.
         </p>
-        <p class="mt-5 text-lg leading-relaxed text-slate-600">
-          From motorised ICU beds and emergency recovery trolleys to bedside lockers and examination couches, every product
-          is built to be sturdy, easy to clean and comfortable for patients and staff.
+        <p class="mt-5 text-ink-600 sm:text-lg">
+          From motorised ICU beds and emergency recovery trolleys to bedside lockers and examination couches, we build furniture that is sturdy,
+          easy to clean and comfortable for patients and staff.
         </p>
-        <dl class="mt-10 grid grid-cols-3 gap-4">
-          <div class="rounded-2xl bg-navy-50 p-5"><dt class="text-xs text-slate-500">Founded</dt><dd class="mt-1 font-display text-2xl font-bold text-navy-900">{site.founded}</dd></div>
-          <div class="rounded-2xl bg-navy-50 p-5"><dt class="text-xs text-slate-500">Products</dt><dd class="mt-1 font-display text-2xl font-bold text-navy-900">{products.length}+</dd></div>
-          <div class="rounded-2xl bg-navy-50 p-5"><dt class="text-xs text-slate-500">Based in</dt><dd class="mt-1 font-display text-2xl font-bold text-navy-900">Pune</dd></div>
+        <dl class="mt-8 grid grid-cols-3 border-y border-ink-200">
+          <div class="py-4 pr-3"><dt class="label-mono">Founded</dt><dd class="mt-1 text-2xl font-bold text-ink-900">{site.founded}</dd></div>
+          <div class="border-x border-ink-200 px-3 py-4"><dt class="label-mono">Products</dt><dd class="mt-1 text-2xl font-bold text-ink-900">{products.length}</dd></div>
+          <div class="py-4 pl-3"><dt class="label-mono">Based in</dt><dd class="mt-1 text-2xl font-bold text-ink-900">Pune</dd></div>
         </dl>
+        <p class="mt-6 flex gap-3 text-[15px] text-ink-600"><Icon name="pin" class="mt-0.5 size-5 shrink-0 text-teal-600" />{addressLine}</p>
       </div>
-      <div class="reveal grid grid-cols-2 gap-4" style="--delay:120ms">
-        <Image src={ward} alt="Hospital ward with beds and bedside lockers" widths={[320, 480, 640]} sizes="(min-width: 1024px) 300px, 45vw" class="col-span-2 aspect-[16/9] w-full rounded-3xl object-cover" />
-        <Image src={room} alt="Private patient room with hospital bed" widths={[240, 360, 480]} sizes="(min-width: 1024px) 280px, 45vw" class="aspect-square w-full rounded-3xl object-cover" />
-        <Image src={office} alt={`${site.name} office in Pune`} widths={[240, 360, 480]} sizes="(min-width: 1024px) 280px, 45vw" class="aspect-square w-full rounded-3xl object-cover" />
-      </div>
-    </div>
-  </section>
-
-  <section class="bg-navy-50/60 py-16 sm:py-20">
-    <div class="container-x">
-      <SectionHeading eyebrow="Our strengths" title="What sets us apart" align="center" />
-      <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <ul class="grid grid-cols-2 gap-3" aria-label="Products from our workshop">
         {
-          values.map((v, i) => (
-            <div class="reveal rounded-3xl bg-white p-6 shadow-card" style={`--delay:${i * 80}ms`}>
-              <span class="grid size-12 place-items-center rounded-2xl bg-teal-50 text-teal-600"><Icon name={v.icon} class="size-6" /></span>
-              <h3 class="mt-5 text-lg font-semibold">{v.title}</h3>
-              <p class="mt-2 text-sm leading-relaxed text-slate-600">{v.text}</p>
-            </div>
+          showcase.map((f, i) => (
+            <li class="reveal tile img-ph aspect-square overflow-hidden rounded-lg border border-ink-200" style={`--delay:${i * 70}ms`}>
+              <Image src={productImage(f)} alt="" widths={[240, 360, 480]} sizes="(min-width: 1024px) 280px, 45vw" class="size-full object-contain p-5 mix-blend-multiply" />
+            </li>
           ))
         }
-      </div>
+      </ul>
     </div>
   </section>
 
-  <section class="container-x py-16 sm:py-20">
-    <SectionHeading eyebrow="Who we serve" title="Industries we work with" intro="We supply furniture for new projects, expansions and replacements across the healthcare sector." />
-    <ul class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {
-        industries.map((x, i) => (
-          <li class="reveal flex items-center gap-4 rounded-2xl border border-navy-100 p-5" style={`--delay:${(i % 3) * 70}ms`}>
-            <span class="grid size-11 shrink-0 place-items-center rounded-xl bg-navy-900 text-teal-300"><Icon name={x.icon} class="size-5" /></span>
-            <span class="font-medium text-navy-900">{x.label}</span>
-          </li>
-        ))
-      }
-    </ul>
+  <section class="border-y border-ink-200 bg-ink-50 py-12 sm:py-20">
+    <div class="container-x">
+      <SectionHeading eyebrow="How we work" title="What you can expect" />
+      <ul class="mt-8 grid gap-px overflow-hidden rounded-lg border border-ink-200 bg-ink-200 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          values.map((v, i) => (
+            <li class="reveal bg-white p-5 sm:p-6" style={`--delay:${i * 70}ms`}>
+              <Icon name={v.icon} class="size-7 text-teal-600" />
+              <h3 class="mt-4 text-lg font-semibold">{v.title}</h3>
+              <p class="mt-1.5 text-[15px] text-ink-600">{v.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="mt-8 grid gap-2.5 sm:flex">
+        <a href="/products" class="btn-ink">Browse the catalogue</a>
+        <a href="/industries" class="btn-line">Industries we serve</a>
+      </div>
+    </div>
   </section>
 
   <QuoteBand />

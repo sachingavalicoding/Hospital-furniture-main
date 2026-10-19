@@ -1,0 +1,43 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import PageHero from '@/components/PageHero.astro';
+import { site, addressLine } from '@/data/site';
+import { breadcrumbSchema } from '@/lib/schema';
+
+const crumbs = [{ href: '/privacy', label: 'Privacy Policy' }];
+const analytics = Boolean(import.meta.env.PUBLIC_GA_ID);
+---
+
+<Layout title="Privacy Policy" description={`How ${site.name} handles the information you share through this website.`} jsonLd={[breadcrumbSchema(Astro.site, crumbs)]}>
+  <PageHero title="Privacy policy" crumbs={crumbs} />
+  <section class="container-x max-w-3xl py-10 sm:py-14">
+    <div class="prose-site text-ink-700">
+      <p>This policy explains what information {site.name} ("we") collects through this website and how we use it.</p>
+      <h2>Information you send us</h2>
+      <p>When you use the quote or enquiry form we receive the details you enter: your name, organisation, phone number, email address, delivery city, the products and quantities you select and your message. The form is processed by our website host, Netlify, which forwards it to our business email.</p>
+      <p>If you choose to contact us on WhatsApp, by phone or by email, your message is handled by that service under its own privacy policy.</p>
+      <h2>How we use it</h2>
+      <ul>
+        <li>To reply to your enquiry and prepare a quotation.</li>
+        <li>To follow up on an order you place with us.</li>
+      </ul>
+      <p>We do not sell your information or use it for unrelated marketing.</p>
+      <h2>Information stored on your device</h2>
+      <p>The website remembers the products you recently viewed, and whether you already sent a request, in your own browser so it can show them back to you. This stays on your device and you can clear it at any time from your browser settings.</p>
+      {
+        analytics ? (
+          <>
+            <h2>Analytics</h2>
+            <p>We use Google Analytics to understand how visitors use the website, such as which pages are viewed. Google may set cookies for this purpose.</p>
+          </>
+        ) : (
+          <p>We do not use advertising or analytics cookies on this website.</p>
+        )
+      }
+      <h2>Embedded maps and links</h2>
+      <p>Our contact page shows an embedded Google Map. Links to Instagram, Facebook, WhatsApp and Google Maps open those services, which have their own privacy policies.</p>
+      <h2>Contact</h2>
+      <p>To ask about or delete the information you sent us, email <a href={`mailto:${site.email}`}>{site.email}</a> or write to {site.name}, {addressLine}.</p>
+    </div>
+  </section>
+</Layout>

@@ -10,7 +10,7 @@ const site = process.env.SITE_URL || 'https://shreejagadambaproduction.netlify.a
 export default defineConfig({
   site,
   trailingSlash: 'ignore',
-  integrations: [react(), sitemap()],
+  integrations: [react(), sitemap({ filter: (page) => !page.includes('/quote/sent') })],
   vite: { plugins: [tailwindcss()] },
   prefetch: { prefetchAll: true, defaultStrategy: 'hover' },
 });
