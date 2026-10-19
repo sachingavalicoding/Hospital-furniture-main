@@ -4,8 +4,9 @@ import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 
-// Set SITE_URL in your host's environment once a custom domain is live.
-const site = process.env.SITE_URL || 'https://shreejagadambaproduction.netlify.app';
+// Canonical URL for links, Open Graph and the sitemap. SITE_URL wins if set; otherwise
+// Netlify's URL (the site's primary domain), so moving to a .in domain needs no code change.
+const site = process.env.SITE_URL || process.env.URL || 'https://shreejagadambaproduction.netlify.app';
 
 export default defineConfig({
   site,

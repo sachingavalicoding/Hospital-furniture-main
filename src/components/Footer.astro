@@ -1,7 +1,7 @@
 ---
 import Logo from './Logo.astro';
 import Icon from './Icon.astro';
-import { nav, site, whatsappLink, addressLine, directionsUrl } from '@/data/site';
+import { nav, site, whatsappLink, addressLine, directionsUrl, hoursText } from '@/data/site';
 import { categories } from '@/data/categories';
 const year = new Date().getFullYear();
 const company = [...nav.filter((n) => n.href !== '/products'), { href: '/quote', label: 'Request a Quote' }, { href: '/privacy', label: 'Privacy Policy' }];
@@ -44,11 +44,11 @@ const company = [...nav.filter((n) => n.href !== '/products'), { href: '/quote',
         <a href={whatsappLink()} target="_blank" rel="noopener" class="flex gap-3 hover:text-white"><Icon name="whatsapp" class="size-5 shrink-0 text-teal-300" />{site.whatsappDisplay}</a>
         <a href={`mailto:${site.email}`} class="flex gap-3 break-all hover:text-white"><Icon name="mail" class="size-5 shrink-0 text-teal-300" />{site.email}</a>
         {
-          site.hours && (
-            <div class="flex gap-3">
+          hoursText && (
+            <p class="flex gap-3">
               <Icon name="clock" class="mt-0.5 size-5 shrink-0 text-teal-300" />
-              <ul>{site.hours.map((h) => <li>{h.days}: {h.open}–{h.close}</li>)}</ul>
-            </div>
+              <span>{hoursText}</span>
+            </p>
           )
         }
       </address>

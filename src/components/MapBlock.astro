@@ -1,6 +1,6 @@
 ---
 import Icon from './Icon.astro';
-import { site, addressLine, directionsUrl, mapsPlaceUrl, mapEmbedUrl, whatsappLink } from '@/data/site';
+import { site, addressLine, directionsUrl, mapsPlaceUrl, mapEmbedUrl, whatsappLink, hoursText } from '@/data/site';
 interface Props {
   heading?: string;
   headingLevel?: 'h2' | 'h3';
@@ -17,11 +17,10 @@ const { heading = 'Visit our workshop', headingLevel: H = 'h2' } = Astro.props;
       <a href={site.phoneHref} class="flex gap-3 font-semibold text-ink-900 hover:text-teal-700"><Icon name="phone" class="size-5 shrink-0 text-teal-600" />{site.phone}</a>
       <a href={`mailto:${site.email}`} class="flex gap-3 break-all hover:text-teal-700"><Icon name="mail" class="size-5 shrink-0 text-teal-600" />{site.email}</a>
       {
-        site.hours ? (
-          <div class="flex gap-3"><Icon name="clock" class="mt-0.5 size-5 shrink-0 text-teal-600" /><ul>{site.hours.map((h) => <li>{h.days}: {h.open}–{h.close}</li>)}</ul></div>
-        ) : (
-          <p class="flex gap-3 text-ink-600"><Icon name="clock" class="mt-0.5 size-5 shrink-0 text-teal-600" />Please call or WhatsApp before visiting so we can arrange a time.</p>
-        )
+        <p class="flex gap-3 text-ink-600">
+          <Icon name="clock" class="mt-0.5 size-5 shrink-0 text-teal-600" />
+          <span>{hoursText && <><strong class="font-semibold text-ink-900">{hoursText}</strong><br /></>}Please call or WhatsApp before visiting so we can arrange a time.</span>
+        </p>
       }
     </address>
     <div class="mt-6 grid gap-2.5 sm:flex">

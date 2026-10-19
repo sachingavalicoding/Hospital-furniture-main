@@ -27,6 +27,8 @@ const ogUrl = new URL(og.src, Astro.site).href;
 const gaId = import.meta.env.PUBLIC_GA_ID;
 const gscToken = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION;
 
+// Structured data needs the days, so hours without confirmed days stay out of it.
+const schemaHours = (site.hours ?? []).filter((h) => h.schemaDays?.length);
 const business = {
   '@context': 'https://schema.org',
   '@type': ['LocalBusiness', 'Organization'],
@@ -52,9 +54,9 @@ const business = {
   hasMap: mapsPlaceUrl,
   areaServed: { '@type': 'Country', name: 'India' },
   sameAs: [site.social.instagram, site.social.facebook],
-  ...(site.hours
+  ...(schemaHours.length
     ? {
-        openingHoursSpecification: site.hours.map((h) => ({
+        openingHoursSpecification: schemaHours.map((h) => ({
           '@type': 'OpeningHoursSpecification',
           dayOfWeek: h.schemaDays,
           opens: h.open,

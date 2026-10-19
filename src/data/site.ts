@@ -23,13 +23,22 @@ export const site = {
     postalCode: '411048',
     country: 'IN',
   },
-  /** Taken from the map link on the previous website. Confirm before launch. */
-  geo: { lat: 18.4473512, lng: 73.8949912 },
+  /** Pin of the Google Business listing, from https://maps.app.goo.gl/hrGudcACYrmPNqy59 */
+  geo: { lat: 18.4473619, lng: 73.8954829 },
+  /** Google Maps listing shared by the business. */
+  mapsUrl: 'https://maps.app.goo.gl/hrGudcACYrmPNqy59',
   /**
-   * Opening hours, e.g. [{ days: 'Mon–Sat', open: '09:30', close: '19:00', schema: ['Monday', ...] }].
-   * Not confirmed yet, so hidden everywhere.
+   * Opening hours. `open`/`close` are 24h for structured data, `label` is what visitors see.
+   * Add `days` (e.g. 'Mon–Sat') and `schemaDays` (e.g. ['Monday', ...]) once the working days
+   * are confirmed; structured data only includes hours that have days.
    */
-  hours: null as null | { days: string; open: string; close: string; schemaDays: string[] }[],
+  hours: [{ label: '9:30 AM to 5:00 PM', open: '09:30', close: '17:00' }] as {
+    label: string;
+    open: string;
+    close: string;
+    days?: string;
+    schemaDays?: string[];
+  }[] | null,
   social: {
     instagram: 'https://www.instagram.com/shree_jagadamba_production/',
     instagramHandle: '@shree_jagadamba_production',
@@ -39,7 +48,7 @@ export const site = {
 };
 
 export const addressLine = `${site.address.street}, ${site.address.city}, ${site.address.region} ${site.address.postalCode}`;
-export const mapsPlaceUrl = `https://www.google.com/maps/search/?api=1&query=${site.geo.lat},${site.geo.lng}`;
+export const mapsPlaceUrl = site.mapsUrl;
 export const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${site.geo.lat},${site.geo.lng}`;
 export const mapEmbedUrl = `https://maps.google.com/maps?q=${site.geo.lat},${site.geo.lng}&z=16&output=embed`;
 
@@ -61,3 +70,6 @@ export function whatsappLink(message?: string) {
 export function productWhatsappText(name: string, code: string) {
   return `Hello ${site.name}, I would like a quote for ${name} (${code}).\nQuantity: \nDelivery city: `;
 }
+
+/** Opening hours as one line, e.g. "Mon–Sat, 9:30 AM to 5:00 PM". */
+export const hoursText = site.hours?.map((h) => (h.days ? `${h.days}, ${h.label}` : h.label)).join('; ') ?? null;
