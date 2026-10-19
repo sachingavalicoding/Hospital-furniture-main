@@ -1,0 +1,140 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getImage } from 'astro:assets';
+import Layout from '@/layouts/Layout.astro';
+import Icon from '@/components/Icon.astro';
+import ProductCard from '@/components/ProductCard.astro';
+import ProductGallery from '@/components/ProductGallery';
+import QuoteBand from '@/components/QuoteBand.astro';
+import { products, type Product } from '@/data/products';
+import { categoryBySlug } from '@/data/categories';
+import { site, whatsappLink } from '@/data/site';
+import { productImage } from '@/lib/images';
+import { breadcrumbSchema } from '@/lib/schema';
+
+export const getStaticPaths = (() => products.map((p) => ({ params: { slug: p.slug }, props: { product: p } }))) satisfies GetStaticPaths;
+
+const { product } = Astro.props as { product: Product };
+const category = categoryBySlug[product.category];
+
+const gallery = await Promise.all(
+  product.images.map(async (name) => {
+    const src = productImage(name);
+    const [main, thumb, full] = await Promise.all([
+      getImage({ src, widths: [480, 720, 960], format: 'webp' }),
+      getImage({ src, width: 160, format: 'webp' }),
+      getImage({ src, width: 1400, format: 'webp' }),
+    ]);
+    return {
+      src: main.src,
+      srcset: main.srcSet.attribute,
+      thumb: thumb.src,
+      full: full.src,
+      width: Number(main.attributes.width ?? 960),
+      height: Number(main.attributes.height ?? 960),
+    };
+  }),
+);
+
+const related = products.filter((p) => p.category === product.category && p.slug !== product.slug).slice(0, 4);
+const crumbs = [
+  { href: '/products', label: 'Products' },
+  { href: `/products/category/${category.slug}`, label: category.short },
+  { href: `/products/${product.slug}`, label: product.code },
+];
+const productSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: product.name,
+  sku: product.code,
+  mpn: product.code,
+  description: product.summary,
+  category: category.name,
+  image: gallery.map((g) => new URL(g.full, Astro.site).href),
+  brand: { '@type': 'Brand', name: site.name },
+  manufacturer: { '@id': new URL('/#business', Astro.site).href },
+};
+const waText = `Hello, I would like a quote for ${product.name} (${product.code}).\nQuantity: \nDelivery city: `;
+---
+
+<Layout
+  title={`${product.name} (${product.code})`}
+  description={`${product.summary} Manufactured by ${site.name}, Pune. Request a quote today.`}
+  image={productImage(product.images[0])}
+  jsonLd={[breadcrumbSchema(Astro.site, crumbs), productSchema]}
+>
+  <section class="container-x pt-6 pb-16 sm:pt-10">
+    <nav aria-label="Breadcrumb" class="mb-6 text-sm text-slate-500">
+      <ol class="flex flex-wrap items-center gap-1.5">
+        <li><a href="/" class="hover:text-navy-900">Home</a></li>
+        {
+          crumbs.map((c, i) => (
+            <li class="flex items-center gap-1.5">
+              <span aria-hidden="true">/</span>
+              {i === crumbs.length - 1 ? <span aria-current="page" class="text-navy-900">{c.label}</span> : <a href={c.href} class="hover:text-navy-900">{c.label}</a>}
+            </li>
+          ))
+        }
+      </ol>
+    </nav>
+    <div class="grid gap-10 lg:grid-cols-2 lg:gap-16">
+      <div class="lg:sticky lg:top-32 lg:self-start">
+        <ProductGallery client:visible images={gallery} alt={product.name} />
+      </div>
+      <div>
+        <div class="flex flex-wrap items-center gap-2">
+          <a href={`/products/category/${category.slug}`} class="rounded-full bg-teal-50 px-3 py-1 text-xs font-semibold tracking-wider text-teal-700 uppercase hover:bg-teal-100">{category.name}</a>
+          <span class="rounded-full bg-navy-50 px-3 py-1 text-xs font-semibold text-navy-700">Code {product.code}</span>
+        </div>
+        <h1 class="mt-4 text-3xl leading-tight font-extrabold sm:text-4xl">{product.name}</h1>
+        <p class="mt-5 text-lg leading-relaxed text-slate-600">{product.summary}</p>
+
+        <h2 class="mt-8 text-sm font-semibold tracking-wider text-navy-900 uppercase">Key features</h2>
+        <ul class="mt-4 grid gap-3 sm:grid-cols-2">
+          {
+            product.features.map((f) => (
+              <li class="flex items-start gap-3 rounded-2xl border border-navy-100 p-4 text-sm text-navy-900">
+                <span class="grid size-6 shrink-0 place-items-center rounded-full bg-teal-500 text-white"><Icon name="check" class="size-3.5" /></span>
+                {f}
+              </li>
+            ))
+          }
+        </ul>
+
+        <dl class="mt-8 divide-y divide-navy-100 rounded-2xl border border-navy-100 text-sm">
+          <div class="flex justify-between gap-4 p-4"><dt class="text-slate-500">Catalogue code</dt><dd class="font-semibold text-navy-900">{product.code}</dd></div>
+          <div class="flex justify-between gap-4 p-4"><dt class="text-slate-500">Range</dt><dd class="font-semibold text-navy-900">{category.name}</dd></div>
+          <div class="flex justify-between gap-4 p-4"><dt class="text-slate-500">Manufacturer</dt><dd class="font-semibold text-navy-900">{site.name}, Pune</dd></div>
+          <div class="flex justify-between gap-4 p-4"><dt class="text-slate-500">Sizes & finishes</dt><dd class="text-right font-semibold text-navy-900">Confirmed on quotation</dd></div>
+        </dl>
+
+        <div class="mt-8 rounded-3xl bg-navy-50 p-6">
+          <p class="font-display text-lg font-semibold text-navy-900">Get the best price for {product.code}</p>
+          <p class="mt-1 text-sm text-slate-600">Tell us the quantity and delivery city. We will reply with pricing and lead time.</p>
+          <div class="mt-5 flex flex-col gap-3 sm:flex-row">
+            <a href={`/contact?product=${product.slug}#quote`} class="btn-primary flex-1 !py-3.5">Request a Quote <Icon name="arrowRight" class="size-4" /></a>
+            <a href={whatsappLink(waText)} target="_blank" rel="noopener" class="btn-whatsapp flex-1 !py-3.5"><Icon name="whatsapp" class="size-5" />Enquire on WhatsApp</a>
+          </div>
+          <a href={site.phoneHref} class="mt-4 flex items-center justify-center gap-2 text-sm font-medium text-navy-700 hover:text-navy-900"><Icon name="phone" class="size-4" />Or call {site.phone}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {
+    related.length > 0 && (
+      <section class="bg-navy-50/60 py-16 sm:py-20">
+        <div class="container-x">
+          <div class="flex items-end justify-between gap-4">
+            <h2 class="text-2xl font-bold sm:text-3xl">More in {category.name}</h2>
+            <a href={`/products/category/${category.slug}`} class="hidden text-sm font-semibold text-teal-600 hover:underline sm:block">View all</a>
+          </div>
+          <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {related.map((p) => <ProductCard product={p} />)}
+          </div>
+        </div>
+      </section>
+    )
+  }
+  <QuoteBand />
+</Layout>

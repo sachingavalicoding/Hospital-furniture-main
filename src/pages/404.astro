@@ -1,0 +1,17 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Icon from '@/components/Icon.astro';
+import { whatsappLink } from '@/data/site';
+---
+
+<Layout title="Page not found" noindex>
+  <section class="container-x flex flex-col items-center py-24 text-center sm:py-32">
+    <p class="font-display text-7xl font-extrabold text-navy-100">404</p>
+    <h1 class="mt-4 text-3xl font-bold sm:text-4xl">This page could not be found</h1>
+    <p class="mt-4 max-w-md text-slate-600">The link may be old or mistyped. Try the catalogue, or tell us what you are looking for.</p>
+    <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+      <a href="/products" class="btn-navy">Browse products <Icon name="arrowRight" class="size-4" /></a>
+      <a href={whatsappLink()} target="_blank" rel="noopener" class="btn-whatsapp"><Icon name="whatsapp" class="size-5" />Ask on WhatsApp</a>
+    </div>
+  </section>
+</Layout>

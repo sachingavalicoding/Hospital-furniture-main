@@ -1,0 +1,48 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import MobileMenu from './MobileMenu';
+import { nav, site } from '@/data/site';
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+---
+
+<header class="sticky top-0 z-50 border-b border-navy-100/70 bg-white">
+  <div class="hidden border-b border-navy-100/70 bg-navy-950 text-navy-100 md:block">
+    <div class="container-x flex h-9 items-center justify-between text-xs">
+      <p>Manufacturer of hospital furniture in {site.address.city}, {site.address.region}</p>
+      <div class="flex items-center gap-5">
+        <a href={site.phoneHref} class="flex items-center gap-1.5 hover:text-white"><Icon name="phone" class="size-3.5" />{site.phone}</a>
+        <a href={`mailto:${site.email}`} class="flex items-center gap-1.5 hover:text-white"><Icon name="mail" class="size-3.5" />{site.email}</a>
+      </div>
+    </div>
+  </div>
+  <div class="container-x flex h-16 items-center justify-between gap-4 md:h-[4.5rem]">
+    <a href="/" aria-label={`${site.name} home`} class="shrink-0"><Logo /></a>
+    <nav aria-label="Main" class="hidden lg:block">
+      <ul class="flex items-center gap-1">
+        {
+          nav.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                aria-current={isActive(item.href) ? 'page' : undefined}
+                class:list={[
+                  'rounded-full px-4 py-2 text-sm font-medium transition',
+                  isActive(item.href) ? 'bg-navy-50 text-navy-900' : 'text-slate-600 hover:text-navy-900',
+                ]}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <div class="flex items-center gap-2">
+      <a href="/contact#quote" class="btn-primary hidden !py-2.5 sm:inline-flex">Request a Quote</a>
+      <MobileMenu client:media="(max-width: 1023px)" items={[...nav]} current={path} />
+    </div>
+  </div>
+</header>

@@ -1,0 +1,87 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import PageHero from '@/components/PageHero.astro';
+import Icon from '@/components/Icon.astro';
+import QuoteForm from '@/components/QuoteForm';
+import { products } from '@/data/products';
+import { site, whatsappLink } from '@/data/site';
+import { breadcrumbSchema } from '@/lib/schema';
+
+const emailjs = {
+  serviceId: import.meta.env.PUBLIC_EMAILJS_SERVICE_ID ?? 'service_7s5a9o8',
+  templateId: import.meta.env.PUBLIC_EMAILJS_TEMPLATE_ID ?? 'template_r6eb15x',
+  publicKey: import.meta.env.PUBLIC_EMAILJS_PUBLIC_KEY ?? 'RGQYd5wnyDEl727DS',
+};
+const options = [...products]
+  .sort((a, b) => Number(a.code.slice(1)) - Number(b.code.slice(1)))
+  .map((p) => ({ slug: p.slug, code: p.code, name: p.name }));
+const crumbs = [{ href: '/contact', label: 'Contact' }];
+
+const channels = [
+  { icon: 'whatsapp', label: 'WhatsApp', value: site.whatsappDisplay, href: whatsappLink(), external: true },
+  { icon: 'phone', label: 'Call us', value: site.phone, href: site.phoneHref },
+  { icon: 'mail', label: 'Email', value: site.email, href: `mailto:${site.email}` },
+  { icon: 'instagram', label: 'Instagram', value: site.social.instagramHandle, href: site.social.instagram, external: true },
+] as const;
+---
+
+<Layout
+  title="Contact & Request a Quote"
+  description={`Request a quote for hospital beds, trolleys and medical furniture from ${site.name}, Kondhwa, Pune. Call ${site.phone} or WhatsApp ${site.whatsappDisplay}.`}
+  jsonLd={[breadcrumbSchema(Astro.site, crumbs)]}
+>
+  <PageHero
+    eyebrow="Contact us"
+    title="Request a quote"
+    intro="Pick the products you need, add quantities and send. You can also reach us directly on WhatsApp, phone or email."
+    crumbs={crumbs}
+  />
+  <section class="container-x py-12 sm:py-16">
+    <div class="grid gap-10 lg:grid-cols-12">
+      <div id="quote" class="scroll-mt-28 rounded-[2rem] border border-navy-100 bg-white p-6 shadow-card sm:p-10 lg:col-span-8">
+        <h2 class="text-2xl font-bold">Your requirement</h2>
+        <p class="mt-2 text-sm text-slate-600">Fields marked * are required.</p>
+        <div class="mt-8">
+          <QuoteForm client:load products={options} whatsapp={site.whatsapp} email={site.email} emailjs={emailjs} />
+        </div>
+      </div>
+      <aside class="space-y-5 lg:col-span-4">
+        <div class="rounded-[2rem] bg-navy-900 p-6 text-white sm:p-8">
+          <h2 class="text-xl font-bold !text-white">Talk to us directly</h2>
+          <ul class="mt-6 space-y-4">
+            {
+              channels.map((c) => (
+                <li>
+                  <a href={c.href} target={'external' in c ? '_blank' : undefined} rel={'external' in c ? 'noopener' : undefined} class="group flex items-center gap-4">
+                    <span class="grid size-11 shrink-0 place-items-center rounded-2xl bg-white/10 text-teal-300 transition group-hover:bg-teal-500 group-hover:text-white">
+                      <Icon name={c.icon} class="size-5" />
+                    </span>
+                    <span class="min-w-0">
+                      <span class="block text-xs text-navy-200">{c.label}</span>
+                      <span class="block truncate font-semibold">{c.value}</span>
+                    </span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+        <div class="rounded-[2rem] border border-navy-100 p-6 sm:p-8">
+          <h2 class="flex items-center gap-2 text-xl font-bold"><Icon name="pin" class="size-5 text-teal-500" />Visit our workshop</h2>
+          <address class="mt-4 text-sm leading-relaxed text-slate-600 not-italic">
+            {site.name}<br />{site.address.street}<br />{site.address.city}, {site.address.region} {site.address.postalCode}
+          </address>
+          <a href={site.mapUrl} target="_blank" rel="noopener" class="btn-outline mt-5 w-full">Open in Google Maps</a>
+        </div>
+      </aside>
+    </div>
+    <div class="mt-10 overflow-hidden rounded-[2rem] border border-navy-100">
+      <iframe
+        title={`Map showing ${site.name} location`}
+        src={`https://maps.google.com/maps?q=${site.geo.lat},${site.geo.lng}&z=15&output=embed`}
+        class="h-80 w-full sm:h-96"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+  </section>
+</Layout>

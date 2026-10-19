@@ -1,0 +1,25 @@
+---
+import { site } from '@/data/site';
+interface Props {
+  light?: boolean;
+}
+const { light = false } = Astro.props;
+---
+
+<span class="flex items-center gap-2.5">
+  <svg class="size-10 shrink-0" viewBox="0 0 64 64" aria-hidden="true">
+    <rect width="64" height="64" rx="16" fill={light ? '#ffffff' : '#0d2142'}></rect>
+    <path d="M32 14c5 5 7.5 10.5 7.5 16.5S37 42 32 46c-5-4-7.5-9.5-7.5-15.5S27 19 32 14Z" fill="#2bbcaf"></path>
+    <path
+      d="M14 30c7 0 12.5 2.5 16 8.5V48C22 47 16 40 14 30Zm36 0c-7 0-12.5 2.5-16 8.5V48c8-1 14-8 16-18Z"
+      fill={light ? '#0d2142' : '#ffffff'}></path>
+  </svg>
+  <span class="flex flex-col leading-none">
+    <span class:list={['font-display text-[1.05rem] font-bold tracking-tight', light ? 'text-white' : 'text-navy-900']}>
+      {site.shortName}
+    </span>
+    <span class:list={['mt-1 text-[0.68rem] font-semibold tracking-[0.22em] uppercase', light ? 'text-teal-300' : 'text-teal-600']}>
+      Production
+    </span>
+  </span>
+</span>

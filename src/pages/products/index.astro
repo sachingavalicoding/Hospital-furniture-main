@@ -1,0 +1,43 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import PageHero from '@/components/PageHero.astro';
+import QuoteBand from '@/components/QuoteBand.astro';
+import ProductCatalog from '@/components/ProductCatalog';
+import { products } from '@/data/products';
+import { categories } from '@/data/categories';
+import { site } from '@/data/site';
+import { toCatalogItems } from '@/lib/catalog';
+import { breadcrumbSchema } from '@/lib/schema';
+
+const items = await toCatalogItems(products);
+const crumbs = [{ href: '/products', label: 'Products' }];
+const itemList = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Hospital furniture catalogue',
+  numberOfItems: products.length,
+  itemListElement: products.map((p, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    url: new URL(`/products/${p.slug}/`, Astro.site).href,
+    name: p.name,
+  })),
+};
+---
+
+<Layout
+  title="Hospital Furniture Catalogue"
+  description={`Browse ${products.length} hospital furniture products: ICU beds, Fowler beds, examination couches, stretchers, OT trolleys, bedside lockers and more from ${site.name}, Pune.`}
+  jsonLd={[breadcrumbSchema(Astro.site, crumbs), itemList]}
+>
+  <PageHero
+    eyebrow="Product catalogue"
+    title="Hospital furniture catalogue"
+    intro="Search by product name or catalogue code, filter by range, and request a quote for any item."
+    crumbs={crumbs}
+  />
+  <section class="container-x py-10 sm:py-14">
+    <ProductCatalog client:load items={items} categories={categories.map((c) => ({ slug: c.slug, name: c.short }))} whatsapp={site.whatsapp} />
+  </section>
+  <QuoteBand title="Need a full ward or ICU set-up?" text="Send your list of product codes and quantities. We will prepare one combined quotation." />
+</Layout>

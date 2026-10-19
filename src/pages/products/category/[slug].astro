@@ -1,0 +1,42 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Layout from '@/layouts/Layout.astro';
+import PageHero from '@/components/PageHero.astro';
+import QuoteBand from '@/components/QuoteBand.astro';
+import ProductCatalog from '@/components/ProductCatalog';
+import { products } from '@/data/products';
+import { categories, type Category } from '@/data/categories';
+import { site } from '@/data/site';
+import { toCatalogItems } from '@/lib/catalog';
+import { breadcrumbSchema } from '@/lib/schema';
+
+export const getStaticPaths = (() => categories.map((c) => ({ params: { slug: c.slug }, props: { category: c } }))) satisfies GetStaticPaths;
+
+const { category } = Astro.props as { category: Category };
+const list = products.filter((p) => p.category === category.slug);
+const items = await toCatalogItems(list);
+const crumbs = [
+  { href: '/products', label: 'Products' },
+  { href: `/products/category/${category.slug}`, label: category.name },
+];
+const others = categories.filter((c) => c.slug !== category.slug);
+---
+
+<Layout
+  title={`${category.name} Manufacturer in Pune`}
+  description={`${category.description} Request a quote from ${site.name}, Pune.`}
+  image={category.image}
+  jsonLd={[breadcrumbSchema(Astro.site, crumbs)]}
+>
+  <PageHero eyebrow={`${list.length} products`} title={category.name} intro={category.description} crumbs={crumbs} />
+  <section class="container-x py-10 sm:py-14">
+    <ProductCatalog client:load items={items} categories={[]} whatsapp={site.whatsapp} fixedCategory={category.slug} />
+  </section>
+  <section class="container-x">
+    <h2 class="text-2xl font-bold">Explore other ranges</h2>
+    <div class="mt-6 flex flex-wrap gap-3">
+      {others.map((c) => <a href={`/products/category/${c.slug}`} class="btn-outline">{c.name}</a>)}
+    </div>
+  </section>
+  <QuoteBand />
+</Layout>

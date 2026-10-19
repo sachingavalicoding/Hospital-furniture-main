@@ -1,0 +1,55 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { nav, site, whatsappLink } from '@/data/site';
+import { categories } from '@/data/categories';
+const year = new Date().getFullYear();
+---
+
+<footer class="mt-auto bg-navy-950 text-navy-200">
+  <div class="container-x grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-12">
+    <div class="lg:col-span-4">
+      <a href="/" aria-label={`${site.name} home`}><Logo light /></a>
+      <p class="mt-5 max-w-sm text-sm leading-relaxed text-navy-200">
+        Manufacturer of ICU beds, ward beds, examination couches, stretchers, trolleys and ward furniture for hospitals,
+        clinics and nursing homes across India.
+      </p>
+      <div class="mt-6 flex gap-3">
+        <a href={site.social.instagram} target="_blank" rel="noopener" aria-label="Instagram" class="grid size-10 place-items-center rounded-full bg-white/10 text-white transition hover:bg-teal-500"><Icon name="instagram" /></a>
+        <a href={site.social.facebook} target="_blank" rel="noopener" aria-label="Facebook" class="grid size-10 place-items-center rounded-full bg-white/10 text-white transition hover:bg-teal-500"><Icon name="facebook" /></a>
+        <a href={whatsappLink()} target="_blank" rel="noopener" aria-label="WhatsApp" class="grid size-10 place-items-center rounded-full bg-white/10 text-white transition hover:bg-whatsapp"><Icon name="whatsapp" /></a>
+      </div>
+    </div>
+    <div class="lg:col-span-3">
+      <h2 class="text-sm font-semibold tracking-wider text-white uppercase">Products</h2>
+      <ul class="mt-4 space-y-2.5 text-sm">
+        {categories.map((c) => <li><a href={`/products/category/${c.slug}`} class="hover:text-white">{c.name}</a></li>)}
+      </ul>
+    </div>
+    <div class="lg:col-span-2">
+      <h2 class="text-sm font-semibold tracking-wider text-white uppercase">Company</h2>
+      <ul class="mt-4 space-y-2.5 text-sm">
+        {nav.map((n) => <li><a href={n.href} class="hover:text-white">{n.label}</a></li>)}
+        <li><a href="/contact#quote" class="hover:text-white">Request a Quote</a></li>
+      </ul>
+    </div>
+    <div class="lg:col-span-3">
+      <h2 class="text-sm font-semibold tracking-wider text-white uppercase">Contact</h2>
+      <address class="mt-4 space-y-3 text-sm not-italic">
+        <a href={site.mapUrl} target="_blank" rel="noopener" class="flex gap-3 hover:text-white">
+          <Icon name="pin" class="mt-0.5 size-5 shrink-0 text-teal-300" />
+          <span>{site.address.street}, {site.address.city} {site.address.postalCode}</span>
+        </a>
+        <a href={site.phoneHref} class="flex gap-3 hover:text-white"><Icon name="phone" class="size-5 shrink-0 text-teal-300" />{site.phone}</a>
+        <a href={whatsappLink()} target="_blank" rel="noopener" class="flex gap-3 hover:text-white"><Icon name="whatsapp" class="size-5 shrink-0 text-teal-300" />{site.whatsappDisplay}</a>
+        <a href={`mailto:${site.email}`} class="flex gap-3 break-all hover:text-white"><Icon name="mail" class="size-5 shrink-0 text-teal-300" />{site.email}</a>
+      </address>
+    </div>
+  </div>
+  <div class="border-t border-white/10">
+    <div class="container-x flex flex-col items-center justify-between gap-2 py-6 text-xs text-navy-300 sm:flex-row">
+      <p>&copy; {year} {site.name}. All rights reserved.</p>
+      <p>Hospital furniture manufacturer in Kondhwa, Pune</p>
+    </div>
+  </div>
+</footer>
